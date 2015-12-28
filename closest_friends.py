@@ -25,6 +25,7 @@ binz = list(range(d1,d2,int((d2-d1)/300)))
 def get_conversation(conv_name):
     global binz
 
+    print(conv_name + ": " + str(len(conversations[conv_name])) + " messages")
     conv = conversations[conv_name]
     only_times = [parser.parse(msg["time"]).timestamp() for msg in conv]
     points, bins = np.histogram(only_times, bins=binz)
@@ -32,10 +33,11 @@ def get_conversation(conv_name):
     dates = [datetime.datetime.fromtimestamp(t) for t in bins]
     regressor = KernelReg(points, np.arange(len(points)), 'c', bw=3*np.ones(len(points)))
     smoothed, sm_mfx = regressor.fit()
-    print(regressor.bw)
 
     return points, dates, smoothed
-   
+
+print("Plotting top 5 most frequent messaged friends")
+
 # Top 5
 conv_names_sorted = sorted(conversations.keys(), key=lambda conv_name: len(conversations[conv_name]), reverse=True)
 conv_names_sorted = [conv_name for conv_name in conv_names_sorted if len(conv_name.split(",")) == 2]
